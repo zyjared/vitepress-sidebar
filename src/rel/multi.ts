@@ -1,13 +1,13 @@
-import type { Group, Item, SidebarMulti } from '../types'
+import type { SidebarGroup, SidebarItem, SidebarMulti } from '../types'
 import type { FormatOptions } from './format'
 import { normalizeBase } from '../utils'
 import { formatSidebarMulti } from './format'
 import { isGroup } from './types'
 
-export function createSidebarMulti<T extends Item[] | Group[]>(sidebar: T, options: FormatOptions): SidebarMulti {
-  const multi: Record<string, Group> = {}
+export function createSidebarMulti<T extends SidebarItem[] | SidebarGroup[]>(sidebar: T, options: FormatOptions): SidebarMulti {
+  const multi: Record<string, SidebarGroup> = {}
 
-  sidebar.forEach((item: Item | Group) => {
+  sidebar.forEach((item: SidebarItem | SidebarGroup) => {
     const group = isGroup(item) ? item : { base: '/', items: [item] }
 
     const p = normalizeBase(options.root, group.base)

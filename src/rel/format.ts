@@ -1,4 +1,4 @@
-import type { Item, SidebarMulti } from '../types'
+import type { SidebarItem, SidebarMulti } from '../types'
 import { getLastSlug, normalizeBase } from '../utils'
 import { isItemArray, isNestedBase } from './types'
 
@@ -22,13 +22,13 @@ export interface FormatOptions {
    */
   inferText?: boolean
 
-  onFormated?: (item: Item, parent?: Item | null) => void
+  onFormated?: (item: SidebarItem, parent?: SidebarItem | null) => void
 }
 
-export function formatSidebar<T extends Item | Item[]>(
+export function formatSidebar<T extends SidebarItem | SidebarItem[]>(
   sidebar: T,
   options: FormatOptions,
-  parent?: Item | null,
+  parent?: SidebarItem | null,
 ) {
   if (isItemArray(sidebar)) {
     sidebar.forEach(item => formatSidebar(item, options, parent))
@@ -49,7 +49,7 @@ export function formatSidebar<T extends Item | Item[]>(
   onFormated?.(sidebar, parent)
 }
 
-function formatBase(sidebar: Item, parent?: Item | null, nest?: boolean) {
+function formatBase(sidebar: SidebarItem, parent?: SidebarItem | null, nest?: boolean) {
   if (!sidebar.base)
     return
 
@@ -58,13 +58,13 @@ function formatBase(sidebar: Item, parent?: Item | null, nest?: boolean) {
     : normalizeBase(parent?.base, sidebar.base)
 }
 
-function formatText(sidebar: Item, infer = false) {
+function formatText(sidebar: SidebarItem, infer = false) {
   if (infer && !sidebar.text && sidebar.link) {
     sidebar.text = getLastSlug(sidebar.link)
   }
 }
 
-function formatPrepend(sidebar: Item, root?: string) {
+function formatPrepend(sidebar: SidebarItem, root?: string) {
   if (root && sidebar.base && !isNestedBase(sidebar.base, root)) {
     sidebar.base = normalizeBase(root, sidebar.base)
   }

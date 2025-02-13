@@ -1,12 +1,11 @@
 import type { DefaultTheme } from 'vitepress'
 
-export type Item = DefaultTheme.SidebarItem
-export type Multi = DefaultTheme.SidebarMulti
+export type SidebarItem = DefaultTheme.SidebarItem
+export type SidebarMulti = DefaultTheme.SidebarMulti
 
-export interface Group {
+export interface SidebarGroup {
   base: string
-  items: Item[]
+  items: SidebarItem[]
 }
 
-export type Sidebar = Group | (Group | Item)[]
-export type SidebarMulti = Multi
+export type Sidebar = SidebarGroup | (SidebarGroup | SidebarItem)[]

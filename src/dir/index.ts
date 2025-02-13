@@ -5,7 +5,7 @@ import { getDirsMap } from './map'
 import { initOptions } from './opts'
 import { step } from './step'
 
-export type Options = GetDirsMapOptions & StepOptions
+export type Options = GetDirsMapOptions & Partial<Omit<StepOptions, 'onTransformed'>>
 
 export function defineSidebar(options: Options) {
   const opts = initOptions(options)

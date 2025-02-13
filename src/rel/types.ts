@@ -1,15 +1,15 @@
-import type { Group, Item, Sidebar, SidebarMulti } from '../types'
+import type { Sidebar, SidebarGroup, SidebarItem, SidebarMulti } from '../types'
 
 import { normalizeLink } from '../utils'
 
-type SidebarArg = Sidebar | Item | SidebarMulti
+type SidebarArg = Sidebar | SidebarItem | SidebarMulti
 
-export function isItemArray(sidebar: SidebarArg): sidebar is Item[] {
+export function isItemArray(sidebar: SidebarArg): sidebar is SidebarItem[] {
   return Array.isArray(sidebar)
 }
 
-export function isGroup(sidebar: SidebarArg): sidebar is Group {
-  return Object.hasOwn(sidebar, 'base') && isItemArray((sidebar as Item).items)
+export function isGroup(sidebar: SidebarArg): sidebar is SidebarGroup {
+  return Object.hasOwn(sidebar, 'base') && isItemArray((sidebar as SidebarItem).items)
 }
 
 export function isSidebarMulti(sidebar: SidebarArg): sidebar is SidebarMulti {

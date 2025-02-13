@@ -20,18 +20,16 @@ const afterTransform = function (item: DirsItem) {
   return clearItem(item)
 }
 
-const createTransform = function (transform: StepOptions['transform']) {
+const createTransform = function (transform?: StepOptions['transform']) {
   if (transform) {
     return function (item: DirsItem) {
-      return afterTransform(
-        transform(
-          beforeTransform(item),
-        ),
+      return transform(
+        beforeTransform(item),
       )
     }
   }
   return function (item: DirsItem) {
-    return afterTransform(beforeTransform(item))
+    return beforeTransform(item)
   }
 }
 
@@ -60,5 +58,6 @@ export function initOptions(options: Options) {
     groupRule,
     includes: patterns,
     transform: createTransform(transform),
+    onTransformed: afterTransform,
   }
 }
