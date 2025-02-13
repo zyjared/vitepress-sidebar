@@ -3,7 +3,7 @@
 ## 使用
 
 ```bash
-pnpm add @zyjared/vitepress-sidebar
+pnpm add -D @zyjared/vitepress-sidebar
 ```
 
 ```ts

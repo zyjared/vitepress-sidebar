@@ -1,8 +1,9 @@
 {
   "name": "@zyjared/vitepress-sidebar",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1-beta.0",
   "packageManager": "pnpm@10.3.0",
+  "license": "MIT",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -36,19 +37,18 @@
     "release": "release-it"
   },
   "dependencies": {
-    "@zyjared/sidebar": "file:",
-    "@zyjared/vitepress-sidebar": "file:"
+    "@zyjared/vitepress-sidebar": "file:",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.0",
+    "gray-matter": "^4.0.3",
+    "vitepress": "^1.6.3"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.2.0",
     "@types/node": "^22.13.2",
     "eslint": "^9.20.1",
-    "fast-glob": "^3.3.3",
-    "fs-extra": "^11.3.0",
-    "gray-matter": "^4.0.3",
     "release-it": "^18.1.2",
     "unbuild": "^3.3.1",
-    "vitepress": "^1.6.3",
     "vitest": "^3.0.5"
   }
 }

@@ -1,22 +1,7 @@
-// import type { DefaultTheme } from 'vitepress'
+import type { DefaultTheme } from 'vitepress'
 
-export interface Multi {
-  [path: string]: Item[] | { items: Item[], base: string }
-}
-
-/**
- * @see https://github.com/vuejs/vitepress/blob/main/types/default-theme.d.ts
- */
-export interface Item {
-  text?: string
-  link?: string
-  items?: Item[]
-  collapsed?: boolean
-  base?: string
-  docFooterText?: string
-  rel?: string
-  target?: string
-}
+export type Item = DefaultTheme.SidebarItem
+export type Multi = DefaultTheme.SidebarMulti
 
 export interface Group {
   base: string
