@@ -1,7 +1,7 @@
 {
   "name": "@zyjared/vitepress-sidebar",
   "type": "module",
-  "version": "0.1.1-beta.1",
+  "version": "0.2.0",
   "packageManager": "pnpm@10.3.0",
   "author": "zyj <zyjared@outlook.com>",
   "license": "MIT",
@@ -40,8 +40,7 @@
     "dev": "vitest",
     "build": "unbuild",
     "prepack": "unbuild",
-    "release": "release-it",
-    "prepare": "husky"
+    "release": "release-it"
   },
   "dependencies": {
     "@zyjared/vitepress-sidebar": "file:",
