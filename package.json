@@ -17,9 +17,6 @@
     "vitepress",
     "sidebar"
   ],
-  "npm": {
-    "public": true
-  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",

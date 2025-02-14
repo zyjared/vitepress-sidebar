@@ -1,27 +1,31 @@
 import type { Entry } from 'fast-glob'
-import type { Dirs, DirsItem } from './types'
+import type { Dirs, DirsItem, DirsValue } from './types'
 import fg from 'fast-glob'
-import { getLastSlug, normalizeBase, normalizeLink, parentBase, removeSuffix, SEP } from '../utils'
+import matter from 'gray-matter'
+import { assign, normalizeBase, normalizeLink, parentBase, removeSuffix } from '../utils'
 import { ITEM_FLAGS } from './constant'
-import { getFrontmatter } from './fm'
+
+function getFrontmatter(filepath: string) {
+  return matter.read(filepath).data
+}
 
 export interface GetDirsMapOptions {
-  srcDir: string
+  includes: string[]
 
-  includes?: string[]
+  srcDir?: string
+
   ignore?: string[]
-
   frontmatter?: boolean
-
-  groupRule?: ((dirname: string, dirpath: string) => DirsItem | Record<string, any> | null)
 }
 
-function createGroupRule(groupRule?: GetDirsMapOptions['groupRule'], basepath?: string) {
-  return groupRule ? (dirname: string) => groupRule(dirname, basepath || '') : null
-}
-
+/**
+ * 得到所有 includes 的 map
+ *
+ * 注意
+ *  - index.md 的信息会直接反映在所在文件夹，也就是 multi
+ */
 export function getDirsMap(options: GetDirsMapOptions) {
-  const { includes, srcDir, ignore, frontmatter, groupRule } = options
+  const { includes, srcDir, ignore, frontmatter } = options
 
   const files = fg.globSync(includes, {
     dot: true,
@@ -33,64 +37,36 @@ export function getDirsMap(options: GetDirsMapOptions) {
   const dirs = {} as Dirs
   const fixBase = createFixBase(srcDir)
   files.forEach(({ name, path: filepath, stats }) => {
-    const parent = parentBase(filepath)
-    const nparent = fixBase(parent)
+    const parentPath = parentBase(filepath)
+    const base = fixBase(parentPath)
 
-    const group = ensureDirsHasGroup(dirs, nparent, createGroupRule(groupRule, parent))
+    const extra = frontmatter && { [ITEM_FLAGS.FRONT_MATTER]: getFrontmatter(filepath) }
+    const item = createItem(name, stats, extra)
+
+    const parent = ensureDirsHasValue(dirs, base, extra)
 
     if (name === 'index.md') {
-      groupWithLink(group)
+      item.link = './'
+      Object.assign(parent, item)
     }
     else {
-      const itemOpts = frontmatter && { [ITEM_FLAGS.FRONT_MATTER]: getFrontmatter(filepath) }
-      group.items.push(createItem(name, stats, itemOpts))
+      parent.items.push(createItem(name, stats, extra))
     }
   })
-
-  return groupRule ? groupWithParent(dirs) : dirs
-}
-
-function groupWithParent(dirs: Dirs) {
-  const keys = Object.keys(dirs)
-
-  const clearKeys = new Set<string>()
-  for (const key of keys) {
-    if (!dirs[key][ITEM_FLAGS.PARENT])
-      continue
-
-    const item = dirs[key]
-    const parent = ensureDirsHasGroup(dirs, dirs[key][ITEM_FLAGS.PARENT])
-    parent.items.push(item)
-
-    clearKeys.add(key)
-  }
-
-  clearKeys.forEach(k => Object.hasOwn(dirs, k) && delete dirs[k])
 
   return dirs
 }
 
-type GrouRule = (dirname: string) => (DirsItem | null)
-
-function ensureDirsHasGroup(dirs: Dirs, base: string, groupRule?: GrouRule | null) {
-  let group = dirs[base]
-  if (!group) {
-    group = dirs[base] = createGroup(base, groupRule)
+function ensureDirsHasValue(dirs: Dirs, base: string, options?: DirsItem) {
+  let multi = dirs[base]
+  if (!multi) {
+    multi = dirs[base] = { base, items: [] } as DirsValue
+  }
+  if (options) {
+    assign(multi, options)
   }
 
-  return group
-}
-
-function createGroup(base: string, groupRule?: GrouRule | null) {
-  const item: DirsItem = { base, items: [] }
-  if (groupRule) {
-    const info = groupRule(getLastSlug(base))
-    if (info) {
-      item[ITEM_FLAGS.PARENT] = parentBase(base)
-      Object.assign(item, info)
-    }
-  }
-  return item
+  return multi
 }
 
 function createItem(name: string, stats?: Entry['stats'], options: DirsItem = {}) {
@@ -99,18 +75,11 @@ function createItem(name: string, stats?: Entry['stats'], options: DirsItem = {}
 }
 
 /**
- * 当该组存在 index.md 的时候，添加 link
- */
-function groupWithLink(group: Dirs[string]) {
-  group.link = './'
-}
-
-/**
- * @returns 函数：去除 base 的前缀 srcDir，并返回标准的 base
+ * 去除 base 的前缀 srcDir，并返回标准的 base
  */
 function createFixBase(srcDir?: string) {
-  if (!srcDir || srcDir === SEP) {
-    return (_p: string) => SEP
+  if (!srcDir || srcDir === '/') {
+    return (_p: string) => '/'
   }
   const nbase = normalizeLink(srcDir)
   return (p: string) => normalizeBase(p).replace(nbase, '')

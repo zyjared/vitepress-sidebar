@@ -7,34 +7,39 @@ import { defineSidebarAuto } from '../src'
 
 const srcDir = 'test-pages'
 const sidebar = {
-  '/folder-1/group-1/': {
-    base: '/folder-1/group-1/',
-    items: [
-      {
-        text: 'file-1',
-        link: 'file-1',
-      },
-      {
-        text: 'file-2',
-        link: 'file-2',
-      },
-    ],
-    link: './',
-  },
-  '/folder-1/group-2/': {
-    base: '/folder-1/group-2/',
-    items: [
-      {
-        text: 'file-3',
-        link: 'file-3',
-      },
-      {
-        text: 'file-4',
-        link: 'file-4',
-      },
-    ],
-    link: './',
-  },
+  '/folder-1/': [
+    {
+      base: '/folder-1/group-1/',
+      text: 'index',
+      link: './',
+      items: [
+        {
+          text: 'file-1',
+          link: 'file-1',
+        },
+        {
+          text: 'file-2',
+          link: 'file-2',
+        },
+      ],
+    },
+    {
+      base: '/folder-1/group-2/',
+      text: 'index',
+      link: './',
+      items: [
+        {
+          text: 'file-3',
+          link: 'file-3',
+        },
+        {
+          text: 'file-4',
+          link: 'file-4',
+        },
+      ],
+    },
+  ],
+
   '/folder-2/': {
     base: '/folder-2/',
     items: [
@@ -52,10 +57,14 @@ beforeAll(() => {
     parent?: SidebarItem
   }
   const createNode = (item: SidebarItem, parent?: SidebarItem) => ({ item, parent })
-  const createFile = (filename: string, base?: string, suffix = '.md') => fs.writeFileSync(path.join(srcDir, base, `${filename}${suffix}`), '')
 
-  const queue = Object.values(sidebar).map(item => createNode(item)) as Node[]
+  const createFile = (filename: string, base?: string, suffix = '.md') => {
+    fs.writeFileSync(path.join(srcDir, base, `${filename}${suffix}`), '')
+  }
+
+  const queue = Object.values(sidebar).flatMap(item => Array.isArray(item) ? item.map(el => createNode(el)) : createNode(item)) as Node[]
   let node: Node | undefined = queue.shift()
+
   while (node) {
     const { item, parent } = node
     const { items, base, link } = item
