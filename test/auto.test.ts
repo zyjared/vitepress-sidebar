@@ -79,6 +79,6 @@ afterAll(() => {
 })
 
 it('auto', () => {
-  const autoSidebar = defineSidebarAuto({ docs: 'test-pages' })
+  const autoSidebar = defineSidebarAuto({ srcDir: 'test-pages' })
   expect(autoSidebar).toMatchObject(sidebar)
 })

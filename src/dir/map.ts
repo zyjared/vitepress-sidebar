@@ -6,22 +6,22 @@ import { ITEM_FLAGS } from './constant'
 import { getFrontmatter } from './fm'
 
 export interface GetDirsMapOptions {
-  docs: string
+  srcDir: string
 
   includes?: string[]
   ignore?: string[]
 
   frontmatter?: boolean
 
-  groupRule?: (dirname: string, dirpath: string) => (DirsItem | null)
+  groupRule?: ((dirname: string, dirpath: string) => DirsItem | Record<string, any> | null)
 }
 
 function createGroupRule(groupRule?: GetDirsMapOptions['groupRule'], basepath?: string) {
-  return groupRule ? (dirname: string) => groupRule(dirname, basepath) : null
+  return groupRule ? (dirname: string) => groupRule(dirname, basepath || '') : null
 }
 
 export function getDirsMap(options: GetDirsMapOptions) {
-  const { includes, docs, ignore, frontmatter, groupRule } = options
+  const { includes, srcDir, ignore, frontmatter, groupRule } = options
 
   const files = fg.globSync(includes, {
     dot: true,
@@ -31,7 +31,7 @@ export function getDirsMap(options: GetDirsMapOptions) {
   })
 
   const dirs = {} as Dirs
-  const fixBase = createFixBase(docs)
+  const fixBase = createFixBase(srcDir)
   files.forEach(({ name, path: filepath, stats }) => {
     const parent = parentBase(filepath)
     const nparent = fixBase(parent)
@@ -72,7 +72,7 @@ function groupWithParent(dirs: Dirs) {
 
 type GrouRule = (dirname: string) => (DirsItem | null)
 
-function ensureDirsHasGroup(dirs: Dirs, base: string, groupRule: GrouRule = null) {
+function ensureDirsHasGroup(dirs: Dirs, base: string, groupRule?: GrouRule | null) {
   let group = dirs[base]
   if (!group) {
     group = dirs[base] = createGroup(base, groupRule)
@@ -81,7 +81,7 @@ function ensureDirsHasGroup(dirs: Dirs, base: string, groupRule: GrouRule = null
   return group
 }
 
-function createGroup(base: string, groupRule: GrouRule = null) {
+function createGroup(base: string, groupRule?: GrouRule | null) {
   const item: DirsItem = { base, items: [] }
   if (groupRule) {
     const info = groupRule(getLastSlug(base))
@@ -106,12 +106,12 @@ function groupWithLink(group: Dirs[string]) {
 }
 
 /**
- * @returns 函数：去除 base 的前缀 docs，并返回标准的 base
+ * @returns 函数：去除 base 的前缀 srcDir，并返回标准的 base
  */
-function createFixBase(docs?: string) {
-  if (!docs || docs === SEP) {
+function createFixBase(srcDir?: string) {
+  if (!srcDir || srcDir === SEP) {
     return (_p: string) => SEP
   }
-  const nbase = normalizeLink(docs)
+  const nbase = normalizeLink(srcDir)
   return (p: string) => normalizeBase(p).replace(nbase, '')
 }

@@ -7,7 +7,7 @@ import fs from 'fs-extra'
 export enum ITEM_FLAGS {
   CREATED_AT = '__created_at',
   PARENT = '__parent',
-  FRONT_MATTER = '__front_matter',
+  FRONT_MATTER = 'frontmatter',
   ORDER = '__order',
 }
 
