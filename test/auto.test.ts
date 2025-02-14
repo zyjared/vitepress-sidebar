@@ -2,6 +2,7 @@ import type { SidebarItem } from '../src/types'
 import path from 'node:path'
 import fs from 'fs-extra'
 import { afterAll, beforeAll, expect, it } from 'vitest'
+
 import { defineSidebarAuto } from '../src'
 
 const srcDir = 'test-pages'

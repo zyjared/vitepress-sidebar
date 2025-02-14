@@ -2,7 +2,7 @@
   "name": "@zyjared/vitepress-sidebar",
   "type": "module",
   "version": "0.2.1",
-  "packageManager": "pnpm@10.3.0",
+  "packageManager": "pnpm@10.4.0",
   "author": "zyj <zyjared@outlook.com>",
   "license": "MIT",
   "publishConfig": {
@@ -40,10 +40,9 @@
     "dev": "vitest",
     "build": "unbuild",
     "prepack": "unbuild",
-    "release": "release-it"
+    "release": "pnpm test && pnpm build && release-it"
   },
   "dependencies": {
-    "@zyjared/vitepress-sidebar": "file:",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.0",
     "gray-matter": "^4.0.3",
