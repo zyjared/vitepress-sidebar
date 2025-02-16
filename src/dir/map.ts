@@ -91,7 +91,11 @@ function ensureDirsHasValue(dirs: Dirs, base: string, extra?: DirsItem) {
 
 function createItem(name: string, stats?: Entry['stats'], extra?: DirsItem) {
   const text = removeSuffix(name)
-  const item = { text, link: text, [ITEM_FLAGS.CREATED_AT]: stats?.birthtimeMs }
+  const item = {
+    text,
+    link: text,
+    [ITEM_FLAGS.CREATED_AT]: stats?.birthtimeMs,
+  }
   return assign(item, extra)
 }
 

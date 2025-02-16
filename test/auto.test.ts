@@ -14,17 +14,17 @@ const sidebar = {
       content: '---\norder: 2\n---\ntest',
       link: './',
       items: [
-        // text 同 link
+        // text 为一级标题
         {
           link: 'file-1',
           text: 'test',
           content: '# test',
         },
-        // text 使用标题
+        // text 无一级标题时
         {
-          text: 'test',
+          text: 'file-2',
           link: 'file-2',
-          content: '# test',
+          content: '## test',
         },
       ],
     },
@@ -53,24 +53,25 @@ const sidebar = {
   '/folder-2/': {
     base: '/folder-2/',
     items: [
-      // 默认按文件名排序
+      // 默认按文件名（link/base末尾slug）排序
       {
-        text: '0-file-5',
-        link: '0-file-5',
+        text: '1-file-5',
+        link: '1-file-5',
         content: 'test',
       },
       // frontmatter.sidebar 为 false 不展示
       {
-        text: '1-file-5',
-        link: '1-file-5',
+        text: '2-file-5',
+        link: '2-file-5',
         content: '---\nsidebar: false\n---\n# test',
         sidebar: false,
       },
       //  分组可以通过 index 的 frontmatter 配置
       {
-        base: '/folder-2/group-3/',
+        base: '/folder-2/2-group-3/',
         text: 'custom-group',
         link: './',
+        collapsed: true,
         content: '---\nsidebar:\n  text: custom-group\n  collapsed: true\n---\n# test',
         items: [
           {

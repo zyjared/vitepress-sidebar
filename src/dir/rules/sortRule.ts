@@ -1,6 +1,11 @@
 import type { Options } from '../types'
 import type { Item } from './types'
+import { getLastSlug } from '../../utils'
 import { ITEM_FLAGS } from '../constant'
+
+function getFilename(item: Item) {
+  return item[ITEM_FLAGS.IS_GROUP] ? getLastSlug(item.base) : item.link
+}
 
 export function createSortRule(sortRule: Options['sortRule']) {
   if (sortRule) {
@@ -22,6 +27,6 @@ export function createSortRule(sortRule: Options['sortRule']) {
       }
     }
 
-    return a.text < b.text ? -1 : 1
+    return getFilename(a) < getFilename(b) ? -1 : 1
   }
 }
