@@ -59,3 +59,11 @@ export function ensureIsSidebarItem(item: any, exclude: SidebarItemKey[] = []) {
   })
   return sidebar
 }
+
+export function delObjKey(obj: Record<string, any>, key: string) {
+  if (Object.hasOwn(obj, key)) {
+    delete obj[key]
+    return true
+  }
+  return false
+}

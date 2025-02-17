@@ -81,6 +81,14 @@ const sidebar = {
           },
         ],
       },
+      // 分组有内容(index有内容)，但是没有子项时，转为普通链接
+      {
+        base: '/folder-2/3-group-4/',
+        text: '3-group-4',
+        link: '3-group-4',
+        content: 'test',
+        items: [],
+      },
     ],
   },
 }

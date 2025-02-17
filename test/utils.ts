@@ -1,6 +1,7 @@
 import type { SidebarItem } from '../src/types'
 import path from 'node:path'
 import fs from 'fs-extra'
+import { getLastSlug } from '../src/utils'
 
 interface Node {
   item: SidebarItem & {
@@ -71,6 +72,13 @@ export function generateTestFiles(sidebar: Record<string, Node['item'] | Node['i
 
       if (content) {
         createFile('index', base, content)
+
+        // 没有子项，转为普通链接
+        if (!items || !items.length) {
+          item.link = getLastSlug(item.base)
+          delete item.base
+          delete item.items
+        }
       }
     }
     else {

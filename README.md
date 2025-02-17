@@ -55,7 +55,7 @@ sidebar:
 # 会被 sidebar 的 text 覆盖
 title: 自定义标题
 
-# 排序方式: order > date > 文件名
+# 排序方式: order > date > 文件名/文件夹名
 order: 1 # 优先级最高
 date: 2025-01-01
 ---

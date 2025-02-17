@@ -1,5 +1,5 @@
 import type { DirsItem, DirsMulti } from './types'
-import { assign } from '../utils'
+import { assign, delObjKey } from '../utils'
 import { ITEM_EXTRA_KEYS } from './constant'
 
 export interface StepOptions {
@@ -10,8 +10,32 @@ export interface StepOptions {
   transform?: (item: DirsItem) => DirsItem
 }
 
-const clearItemFlags = function (item: DirsItem) {
-  ITEM_EXTRA_KEYS.forEach(k => delete item[k])
+function clearItemFlags(item: DirsItem) {
+  ITEM_EXTRA_KEYS.forEach(k => delObjKey(item, k))
+}
+
+function clearDirsMultiFlags(dirsMulti: DirsMulti) {
+  const traverse = (item: DirsItem) => {
+    if (item.items) {
+      item.items.forEach(traverse)
+    }
+    clearItemFlags(item)
+  }
+  Object.values(dirsMulti).forEach(i => Array.isArray(i) ? i.forEach(traverse) : traverse(i))
+}
+
+function clearSrcDir(dirsMulti: DirsMulti) {
+  const it = dirsMulti['/']
+  if (!it || Array.isArray(it))
+    return
+
+  if (!it.items?.length) {
+    delObjKey(dirsMulti, '/')
+    return
+  }
+
+  delObjKey(it, 'link')
+  delObjKey(it, 'text')
 }
 
 export function step(dirsMulti: DirsMulti, options: StepOptions) {
@@ -35,17 +59,9 @@ export function step(dirsMulti: DirsMulti, options: StepOptions) {
   Object.values(dirsMulti).forEach(traverse)
 
   end && end(dirsMulti)
-  clearDirsMulti(dirsMulti)
+
+  clearDirsMultiFlags(dirsMulti)
+  clearSrcDir(dirsMulti)
 
   return dirsMulti
-}
-
-function clearDirsMulti(dirsMulti: DirsMulti) {
-  const traverse = (item: DirsItem) => {
-    if (item.items) {
-      item.items.forEach(traverse)
-    }
-    clearItemFlags(item)
-  }
-  Object.values(dirsMulti).forEach(i => Array.isArray(i) ? i.forEach(traverse) : traverse(i))
 }

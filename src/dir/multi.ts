@@ -1,5 +1,5 @@
 import type { Dirs, DirsItem, DirsMulti, DirsValue } from './types'
-import { assign, ensureIsSidebarItem, parentBase, SEP } from '../utils'
+import { assign, delObjKey, ensureIsSidebarItem, parentBase, SEP } from '../utils'
 import { ITEM_FLAGS } from './constant'
 
 export interface ToMultiOptions {
@@ -18,6 +18,20 @@ const createGroupRule = function (opts: ToMultiOptions) {
 
 function signIsGroup(item: DirsItem) {
   item[ITEM_FLAGS.IS_GROUP] = true
+}
+
+function extendDirs(dirs: DirsMulti, base: string, item: DirsValue) {
+  let v = dirs[base]
+  if (!v) {
+    v = dirs[base] = []
+  }
+
+  if (Array.isArray(v)) {
+    v.push(item)
+  }
+  else {
+    v.items.push(item)
+  }
 }
 
 export function toMulti(dirs: Dirs, options: ToMultiOptions = {}) {
@@ -48,22 +62,8 @@ export function toMulti(dirs: Dirs, options: ToMultiOptions = {}) {
   }
 
   clearKeys.forEach((k) => {
-    Object.hasOwn(dirs, k) && delete dirs[k]
+    Object.hasOwn(dirs, k) && delObjKey(dirs, k)
   })
 
   return dirs as DirsMulti
-}
-
-function extendDirs(dirs: DirsMulti, base: string, item: DirsValue) {
-  let v = dirs[base]
-  if (!v) {
-    v = dirs[base] = []
-  }
-
-  if (Array.isArray(v)) {
-    v.push(item)
-  }
-  else {
-    v.items.push(item)
-  }
 }
