@@ -16,8 +16,8 @@ export function defineSidebar(options: Options | null = {}, extendInitOptions = 
   const opts = extendInitOptions(options)
   const dirsmap = getDirsMap(opts)
 
-  const dirsMulti = toMulti(dirsmap, opts)
-  step(dirsMulti, opts)
+  toMulti(dirsmap, opts)
+  step(dirsmap, opts)
 
-  return dirsMulti as SidebarMulti
+  return dirsmap as SidebarMulti
 }

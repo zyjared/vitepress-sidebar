@@ -77,7 +77,7 @@ function dirsValueHasIndex(val: DirsValue, item: DirsItem) {
   assign(val, item)
 }
 
-function ensureDirsHasValue(dirs: Dirs, base: string, extra?: DirsItem) {
+export function ensureDirsHasValue(dirs: Dirs, base: string, extra?: DirsItem) {
   let multi = dirs[base]
   if (!multi) {
     multi = dirs[base] = { base, items: [] } as DirsValue

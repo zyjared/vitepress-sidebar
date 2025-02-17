@@ -23,7 +23,7 @@
       "require": "./dist/index.cjs"
     }
   },
-  "main": "./dist/index.cjs",
+  "main": "dist/index.cjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
@@ -35,7 +35,7 @@
     "dev": "vitest",
     "build": "unbuild",
     "prepack": "unbuild",
-    "release": "nr build && bumpp && pnpm publish"
+    "release": "bumpp && pnpm publish"
   },
   "peerDependencies": {
     "vitepress": "^1.6.3"

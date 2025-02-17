@@ -3,9 +3,7 @@ import type { ITEM_FLAGS } from './constant'
 import type { ToMultiOptions } from './multi'
 import type { StepOptions } from './step'
 
-interface FrontMatter extends Record<string, any> {}
-
-export interface DirsItem<FM = FrontMatter> extends SidebarItem {
+export interface DirsItem<FM = Record<string, any>> extends SidebarItem {
   [ITEM_FLAGS.CREATED_AT]?: number
 
   [ITEM_FLAGS.FRONT_MATTER]?: FM
@@ -24,7 +22,7 @@ export interface DirsValue extends DirsItem {
 }
 
 export type Dirs = Record<string, DirsValue>
-export type DirsMulti = Record<string, DirsValue | DirsValue[]>
+// export type DirsMulti = Record<string, DirsValue | DirsValue[]>
 
 export interface Options {
   /**
@@ -48,10 +46,11 @@ export interface Options {
    */
   transform?: StepOptions['transform']
 
-  sortRule?: StepOptions['sortRule']
-
   /**
    * 如果返回对象，视为多级侧边栏
    */
   groupRule?: ToMultiOptions['groupRule']
+
+  filterRule?: StepOptions['filterRule']
+  sortRule?: StepOptions['sortRule']
 }
