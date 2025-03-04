@@ -1,10 +1,11 @@
 import type { DefaultTheme, UserConfig } from 'vitepress'
-import { defineConfig } from 'vitepress'
-import { defineSidebar as defineSidebarDir } from './dir'
-import { defineSidebar as defineSidebarRel } from './rel'
+import type { GeneratorOptions } from './generator'
+import { defineConfig } from './config'
+import { Generator } from './generator'
 
-export const defineSidebar = defineSidebarRel
-export const defineSidebarAuto = defineSidebarDir
+export function defineSidebarAuto(options: Partial<GeneratorOptions> = {}) {
+  return new Generator(defineConfig(options)).generate()
+}
 
 export function defineConfigWithSidebar(config: UserConfig<DefaultTheme.Config>) {
   if (!config.themeConfig)

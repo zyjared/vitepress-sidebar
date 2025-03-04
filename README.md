@@ -38,65 +38,41 @@ export default defineConfigWithSidebar({
 
 ## frontmatter
 
-可以直接在 frontmatter 中配置侧边栏数据，包括多级侧边栏。
-
 ```md
 ---
-# sidebar: false # 不出现在侧边栏
-sidebar:
-  text: title
-  # link: filename # 这也会覆盖 link
+order: 1          # 作为排序依据，优先级最高
+date: 2025-01-01  # 作为排序依据
+                  # 链接名也是排序依据，优先级最低
 
-# 标题: 省略则是文档的一级标题或文件名
-# 会被 sidebar 的 text 覆盖
-title: 自定义标题
-
-# 排序方式: order > date > 文件名/文件夹名
-order: 1 # 优先级最高
-date: 2025-01-01
+title: 标题
+sidebar: false    # 不显示在侧边栏
 ---
 
-# 标题
+# 一级标题
+
+这些都会是链接名
+
+1. frontmatter.title (优先级最高)
+2. 一级标题
+3. 文件名
 ```
 
-### 多级侧边栏
+## 多级侧边栏与index
 
-如果需要多级侧边栏，可以在文件夹下创建一个 `index.md` 文件，`index.md` 中的数据就是这个分组的数据。
+默认情况下，一个文件夹内如果不存在 `index.md` 时，该文件夹是一个分组。并且，该分组会出现在侧边栏，而分组名就是文件夹名。
+
+如果一个文件夹下存在 `index.md`，也可以通过 frontmatter 设置侧边栏规则。
 
 ```md
+<!-- index.md -->
 ---
-# group: false # 所在文件夹不作为分组
+sidebar: group      # 表示所在文件夹应当视为分组
+sidebar: collapsed  # 表示所在文件夹应当视为分组，并且默认收起
 
-# sidebar: false # 所在文件夹不出现在侧边栏
-sidebar:
-  text: group-title
+sidebar: true       # 不是分组，但是 `index` 应当视为链接出现在侧边栏
 
-# 如果不使用文件夹名或一级标题作为分组名
-title: group-title
-
-order: 2
-date: 2025-01-01
+sidebar: false      # 所在文件夹下的文档都不应当出现在侧边栏
 ---
-```
 
-`index.md` 中不一定要有内容，如果没有内容或只有 frontmatter，那么其所在文件夹不会有 `link` 值。
-
-## 自定义
-
-默认行为是 `defineSidebarAuto()` 的第二个参数决定的，默认提供了一个初始化配置项的函数。
-
-你可以：
-
-- 扩展默认行为
-- 重写默认行为
-
-```ts
-import { buildAutoOptions, defineSidebarAuto as defineSidebar } from '@zyjared/vitepress-sidebar'
-
-// 这具有默认行为
-const sidebar = defineSidebar({ srcDir: 'pages' })
-
-// 可以通过第二个参数，清除默认行为，
-// 并构建一套自定义的规则
-const sidebar = defineSidebar({}, buildAutoOptions(options => options))
+不设置 sidebar 时，表示不是分组，`index` 链接也不会出现在侧边栏。
 ```
