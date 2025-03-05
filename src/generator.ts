@@ -1,4 +1,6 @@
+import type { DefaultTheme } from 'vitepress'
 import type { Item } from './item'
+import path from 'node:path'
 import { globSync } from 'tinyglobby'
 import { buildItem, clearItemExtraAttrs, EXTRA_ATTRS, isGroupItem, isIndexItem, isInvalidItem, itemFmSidebarIsGroup } from './item'
 import { getLastSlug, parentBase, removeExtraSlash } from './utils'
@@ -21,7 +23,7 @@ export class Generator {
 
     this.data = {}
     this.sortRule = sortRule
-    this.srcDir = srcDir.endsWith('/') ? srcDir : `${srcDir}/`
+    this.srcDir = `${path.resolve(srcDir).split(path.sep).join('/')}/`
     this.files = globSync({
       cwd: srcDir,
       patterns: include,
@@ -48,6 +50,9 @@ export class Generator {
     return baseItem
   }
 
+  /**
+   * 将 index 数据绑定到所属文件夹
+   */
   processIndexItem(base: string, item: Item) {
     const baseItem = this.ensureBaseItem(base)
     baseItem[EXTRA_ATTRS.INDEX] = item
@@ -155,7 +160,7 @@ export class Generator {
 
   generate() {
     this.tryGenerate()
-    const sidebar = {}
+    const sidebar: DefaultTheme.Sidebar = {}
 
     Object.keys(this.data).forEach((key) => {
       if (this.data[key]) {

@@ -12,5 +12,5 @@ export function defineConfigWithSidebar(config: UserConfig<DefaultTheme.Config>)
     config.themeConfig = {}
 
   config.themeConfig.sidebar = defineSidebarAuto({ srcDir: config.srcDir || '.' })
-  return defineConfig(config)
+  return config
 }

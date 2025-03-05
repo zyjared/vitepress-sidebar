@@ -8,7 +8,7 @@ export enum EXTRA_ATTRS {
   FRONTMATTER = 'frontmatter',
   GROUP = 'group',
   ORDER = 'order',
-  CONTENT_IS_EMPTY = 'empty',
+  HAS_CONTENT = 'hasContent',
   INDEX = 'index',
 }
 
@@ -22,7 +22,7 @@ export interface FrontMatter {
 export type Item = DefaultTheme.SidebarItem & {
   items?: Item[]
   [EXTRA_ATTRS.FRONTMATTER]?: FrontMatter
-  [EXTRA_ATTRS.CONTENT_IS_EMPTY]?: boolean
+  [EXTRA_ATTRS.HAS_CONTENT]?: boolean
   [EXTRA_ATTRS.GROUP]?: FrontMatter['sidebar']
   [EXTRA_ATTRS.INDEX]?: Item
 }
@@ -30,7 +30,7 @@ export type Item = DefaultTheme.SidebarItem & {
 export function clearItemExtraAttrs(item: Item, assgin = false): Item {
   const exclude = [
     EXTRA_ATTRS.FRONTMATTER,
-    EXTRA_ATTRS.CONTENT_IS_EMPTY,
+    EXTRA_ATTRS.HAS_CONTENT,
     EXTRA_ATTRS.GROUP,
     EXTRA_ATTRS.INDEX,
   ]
@@ -56,28 +56,29 @@ export function isIndexItem(item: Item) {
 }
 
 export function isHiddenItem(item: Item) {
-  return item[EXTRA_ATTRS.FRONTMATTER]?.sidebar === false
+  const sidebar = item[EXTRA_ATTRS.FRONTMATTER]?.sidebar
+  return sidebar === false
 }
 
 export function isInvalidItem(item: Item | any) {
-  if (!item || isHiddenItem(item))
+  if (!item || isHiddenItem(item)) {
     return true
+  }
 
   const indexItem = item[EXTRA_ATTRS.INDEX]
-  if (indexItem) {
-    return isInvalidItem(indexItem)
+  if (!indexItem) {
+    return !item[EXTRA_ATTRS.HAS_CONTENT] && !item.items?.length
   }
-  else {
-    return !item.items?.length && item[EXTRA_ATTRS.CONTENT_IS_EMPTY]
-  }
+
+  return isInvalidItem(indexItem) && !item.items?.length
 }
 
 function prepItemFm(item: Item, filepath: string): Item {
   const { content, data } = matter.read(filepath)
-  const contentIsNotEmpty = /./.test(content.trim())
+  const hasContent = /./.test(content.trim())
 
   // 没有 fm.title 时, 一级标题作为 fm.title
-  if (contentIsNotEmpty && !data.title) {
+  if (hasContent && !data.title) {
     const titleMatch = content.match(/^#\s+(.+)/m)
     if (titleMatch) {
       data.title = titleMatch[1].trim()
@@ -88,7 +89,7 @@ function prepItemFm(item: Item, filepath: string): Item {
     ...item,
     text: data.title || item.text,
     [EXTRA_ATTRS.FRONTMATTER]: data as FrontMatter,
-    [EXTRA_ATTRS.CONTENT_IS_EMPTY]: !contentIsNotEmpty,
+    [EXTRA_ATTRS.HAS_CONTENT]: hasContent,
   }
 }
 
