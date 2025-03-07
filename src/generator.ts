@@ -23,13 +23,13 @@ export class Generator {
 
     this.data = {}
     this.sortRule = sortRule
-    this.srcDir = `${path.resolve(srcDir).split(path.sep).join('/')}/`
+    this.srcDir = `${path.resolve(srcDir).split(path.sep).join('/')}`
     this.files = globSync({
       cwd: srcDir,
       patterns: include,
       ignore,
       onlyFiles: true,
-    })
+    }).map(filepath => `/${filepath}`)
   }
 
   withBase(filepath: string) {
